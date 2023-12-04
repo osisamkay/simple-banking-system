@@ -4,62 +4,162 @@ from random import randint
 
 
 class Account(metaclass=ABCMeta):
+    """
+    Abstract base class representing a generic bank account.
+    """
+
     @abstractmethod
     def open_new_account(self, name, initial_deposit):
+        """
+        Opens a new bank account.
+
+        Parameters:
+        - name (str): The name of the account holder.
+        - initial_deposit (float): The initial deposit amount.
+
+        Returns:
+        - int: The generated account number.
+        """
         pass
 
     @abstractmethod
     def generate_account_number(self):
+        """
+        Generates a unique account number.
+
+        Returns:
+        - int: The generated account number.
+        """
         pass
 
     @abstractmethod
     def retrieve_account(self, account_number):
+        """
+        Retrieves information about a specific account.
+
+        Parameters:
+        - account_number (int): The account number to retrieve.
+
+        Returns:
+        - dict or None: A dictionary containing account information, or None if the account is not found.
+        """
         pass
 
 
 class SavingsAccount(Account):
+    """
+    Concrete class representing a savings account, inheriting from the Account base class.
+    """
+
     def __init__(self):
+        """
+        Initializes a new SavingsAccount instance with empty account and transaction history.
+        """
         self.savings_accounts = {}
         self.transaction_history = {}
         self.current_account_number = None
         self.account_counter = randint(1000000000, 9999999999)
 
     def open_new_account(self, name, initial_deposit):
+        """
+        Opens a new savings account.
+
+        Parameters:
+        - name (str): The name of the account holder.
+        - initial_deposit (float): The initial deposit amount.
+
+        Returns:
+        - int: The generated account number.
+        """
         account_number = self.generate_account_number()
         self.savings_accounts[account_number] = {"name": name, "balance": initial_deposit}
-        self.transaction_history[account_number] = [{"type": "Opening", "amount": initial_deposit, "timestamp": datetime.now()}]
+        self.transaction_history[account_number] = [
+            {"type": "Opening", "amount": initial_deposit, "timestamp": datetime.now()}
+        ]
         return account_number
 
     def generate_account_number(self):
+        """
+        Generates a unique account number.
+
+        Returns:
+        - int: The generated account number.
+        """
         return self.account_counter
 
     def retrieve_account(self, account_number):
+        """
+        Retrieves information about a specific savings account.
+
+        Parameters:
+        - account_number (int): The account number to retrieve.
+
+        Returns:
+        - dict or None: A dictionary containing account information, or None if the account is not found.
+        """
         return self.savings_accounts.get(account_number, None)
 
     def deposit(self, amount_deposit):
+        """
+        Makes a deposit into the current savings account.
+
+        Parameters:
+        - amount_deposit (float): The amount to deposit.
+
+        Returns:
+        - bool: True if the deposit is successful, False otherwise.
+        """
         if self.current_account_number in self.savings_accounts:
             self.savings_accounts[self.current_account_number]["balance"] += amount_deposit
-            self.transaction_history[self.current_account_number].append({"type": "Deposit", "amount": amount_deposit, "timestamp": datetime.now()})
+            self.transaction_history[self.current_account_number].append(
+                {"type": "Deposit", "amount": amount_deposit, "timestamp": datetime.now()}
+            )
             return True
         return False
 
     def withdraw(self, amount_withdraw):
+        """
+        Makes a withdrawal from the current savings account.
+
+        Parameters:
+        - amount_withdraw (float): The amount to withdraw.
+
+        Returns:
+        - bool: True if the withdrawal is successful, False otherwise.
+        """
         if self.current_account_number in self.savings_accounts:
             if self.savings_accounts[self.current_account_number]["balance"] >= amount_withdraw:
                 self.savings_accounts[self.current_account_number]["balance"] -= amount_withdraw
-                self.transaction_history[self.current_account_number].append({"type": "Withdrawal", "amount": amount_withdraw, "timestamp": datetime.now()})
+                self.transaction_history[self.current_account_number].append(
+                    {"type": "Withdrawal", "amount": amount_withdraw, "timestamp": datetime.now()}
+                )
                 return True
         return False
 
     def view_account_balance(self):
+        """
+        Views the current balance of the savings account.
+
+        Returns:
+        - float or None: The current balance, or None if there's an error fetching the balance.
+        """
         return self.savings_accounts.get(self.current_account_number, {}).get("balance", None)
 
     def view_transaction_history(self):
+        """
+        Views the transaction history of the savings account.
+
+        Returns:
+        - list: A list of dictionaries representing transaction history.
+        """
         return self.transaction_history.get(self.current_account_number, [])
 
 
 # Simple console interface
 def main():
+    """
+    Main function to run the simple console-based banking system.
+    """
     savings_account = SavingsAccount()
 
     while True:
