@@ -1,5 +1,3 @@
-Certainly! Below is a simple template for a README file for your GitHub repository, along with an explanation of the four pillars of Object-Oriented Programming (OOP).
-
 ### README.md
 
 # Simple Banking System with Object-Oriented Programming
